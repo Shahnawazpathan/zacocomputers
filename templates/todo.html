@@ -1,0 +1,96 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+{% block start %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+<style>
+    .container {
+        padding: 2rem 0rem;
+    }
+
+    h4 {
+        margin: 2rem 0rem 1rem;
+    }
+
+    .table-image td, .table-image th {
+        vertical-align: middle;
+    }
+</style>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form method="post" action="{% url 'create_task' %}" class="mb-4">
+                    {% csrf_token %}
+                    {{ form1 | crispy }}
+                    <button type="reset" class="btn btn-danger btn-outline-danger">Reset</button>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div id="toolbar m-3">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Add Task</button>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="title" data-filter-control="input" data-sortable="true">Title</th>
+                    <th data-field="description" data-filter-control="select" data-sortable="true">Description</th>
+                    <th data-field="edit">Action</th>
+                    <th data-field="edit">Delete</th>
+                </tr>
+            </thead>
+          <tbody>
+            {% for task in my_tasks %}
+                <tr>
+                    <td class="bs-checkbox"><input data-index="{{ forloop.counter0 }}" name="btSelectItem" type="checkbox"></td>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>
+                        <form method="post" action="{% url 'status' task.id %}">
+                            {% csrf_token %}
+                            <div class="col-lg-12 row d-flex">
+                                <div class="form-group col-4">
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="completed" selected>{% if task.completed %} Completed{% else %}Underprocess{% endif %}</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="remaining">Remaining</option>
+                                    </select>
+                                </div>
+                                <div class="col-2 ">
+                                    <button type="submit" class="btn btn-primary btn-sm">Update Status</button>
+                                </div>
+                            </div>
+                        </form>
+                    </td> 
+                    <td>
+                        <form method="post" action="{% url 'delete_task' task.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+
+{% endblock start %}
